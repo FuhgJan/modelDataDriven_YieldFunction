@@ -36,11 +36,11 @@ The code requires the following packages as imports:
 
  - [NumPy](http://numpy.scipy.org) for array handling
  - [Scipy](https://www.scipy.org/) for numerical solutions
- - [torch](https://pytorch.org/) for the neural network and automatic differentiation libraries
+ - [pytorch](https://pytorch.org/) for the neural network and automatic differentiation libraries
  - [MatPlotLib](https://matplotlib.org/) for graphical output
- - [pyevtk](https://github.com/pyscience-projects/pyevtk) for graphical output to paraview
- - [paraview](https://www.paraview.org/python/) for a graphical user interface
- - [triangle](https://rufat.be/triangle/) for numerical integration
+ - [sympy](https://www.sympy.org/en/index.html) for some symbolic algorithms
+ - [scikit-image](https://scikit-image.org/) for marching cubes algorithm
+ - [https://scikit-learn.org/stable/](https://scikit-learn.org/stable/) for predefined scaler classes
 
 
 ## References
