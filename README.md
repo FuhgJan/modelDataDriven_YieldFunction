@@ -1,4 +1,4 @@
-# # Model-data-driven modeling of yield functions
+## Model-data-driven modeling of yield functions
 
   - Author: Jan N Fuhg
   - Organization: Cornell University
