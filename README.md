@@ -13,9 +13,9 @@
 
 <table>
   <tr>
-    <td>First Screen Page</td>
-     <td>Holiday Mention</td>
-     <td>Present day in purple and selected day in pink</td>
+    <td>Stress-strain curve</td>
+     <td>Uniaxial loading comparison</td>
+     <td>Yield surfaces in 3D space</td>
   </tr>
   <tr>
     <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
