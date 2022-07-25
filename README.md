@@ -6,9 +6,9 @@
 
 
 <p align="center">
-<img align="left" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" />
+<img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" />
     <img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" />
-  <img align="right" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" />
+  <img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" />
 </p>
 
 
