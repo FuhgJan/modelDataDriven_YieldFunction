@@ -13,8 +13,8 @@ This code requires an [Anaconda](https://www.anaconda.com/products/individual) o
 The complete repository can be cloned and installed locally. It is recommended to create a conda environment before installation. This can be done by the following the command line instructions
 
 ```
-$ git clone https://github.com/FuhgJan/mixedDEM.git ./mixedDEM
-$ cd mixedDEM
+$ git clone https://github.com/FuhgJan/modelDataDriven_YieldFunction.git ./modelDataDriven_YieldFunction
+$ cd modelDataDriven_YieldFunction
 $ conda env create -f environment.yml
 $ conda activate modelDataDriven_YieldFunction
 $ python -m pip install . --user
