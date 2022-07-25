@@ -16,9 +16,6 @@
   <div style="float: left; padding: 10px;">
     <img src='mDataDriven/Images/uni_GP_corrected.png' width="350" height="350" align="center"/>
     <figcaption align="center"><b>Fig 2.5; Courtesy of Linear Algebra: Theory,<br> Intuition, Code by Mike X Cohen</b></figcaption>
-  </div>
-
-  <div style="float: right; padding: 10px;">
     <img src='mDataDriven/Images/uni_GP_corrected.png' width="350" height="350" align="center"/>
     <figcaption align="center"><b>Fig 2.3; Courtesy of Linear Algebra: Theory,<br> Intuition, Code by Mike X Cohen</b></figcaption>
   </div>
