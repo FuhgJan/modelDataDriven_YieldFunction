@@ -4,16 +4,27 @@
   - Organization: Cornell University
 
 
-|
+
 <p align="center">
-<img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </p>|
-|<p align="center">
-    <img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" /> </p> |
-    <p align="center">
-  <img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" />
-</p> |
-|:---:|:---:|:---:|
-| http://videoblocks.com | http://audioblocks.com | http://graphicstock.com |
+<img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </p>
+<img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" /> 
+<img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" />
+</p> 
+
+<table>
+  <tr>
+    <td>First Screen Page</td>
+     <td>Holiday Mention</td>
+     <td>Present day in purple and selected day in pink</td>
+  </tr>
+  <tr>
+    <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
+    <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
+    <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
+  </tr>
+ </table>
+
+
 
 
 ## Installation
