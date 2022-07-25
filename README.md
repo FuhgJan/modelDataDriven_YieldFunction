@@ -7,7 +7,7 @@
 
 <p align="center">
 <img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="400" height="300" />
-  <img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="400" height="300" />
+  <img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="300" height="300" />
 </p>
 
 
