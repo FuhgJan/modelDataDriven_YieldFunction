@@ -16,14 +16,14 @@ The complete repository can be cloned and installed locally. It is recommended t
 $ git clone https://github.com/FuhgJan/mixedDEM.git ./mixedDEM
 $ cd mixedDEM
 $ conda env create -f environment.yml
-$ conda activate mixedDEM
+$ conda activate modelDataDriven_YieldFunction
 $ python -m pip install . --user
 
 ```
-The provided example can then be run with
+The code can then be run with
 
 ```
-$ python -m mdem
+$ python -m mDataDriven
 ```
 
 Outputs will be written to mixedDEM/outputs/vtk_files/ and can be opened with paraview.
