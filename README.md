@@ -6,7 +6,7 @@
 
 
 <p align="center">
-<img align="middle" src="mDataDriven/Images/StressStrain.pdf" alt="mDEM scheme" width="600" height="200" />
+<img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="600" height="200" />
 </p>
 
 
