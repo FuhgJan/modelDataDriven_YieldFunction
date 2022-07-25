@@ -11,6 +11,20 @@
   <img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="300" height="300" />
 </p>
 
+<div class="container" style="display: inline-block;">  
+  <figure>
+  <div style="float: left; padding: 10px;">
+    <img src='mDataDriven/Images/uni_GP_corrected.png' width="350" height="350" align="center"/>
+    <figcaption align="center"><b>Fig 2.5; Courtesy of Linear Algebra: Theory,<br> Intuition, Code by Mike X Cohen</b></figcaption>
+  </div>
+
+  <div style="float: right; padding: 10px;">
+    <img src='mDataDriven/Images/uni_GP_corrected.png' width="350" height="350" align="center"/>
+    <figcaption align="center"><b>Fig 2.3; Courtesy of Linear Algebra: Theory,<br> Intuition, Code by Mike X Cohen</b></figcaption>
+  </div>
+  </figure>
+</div>
+
 
 ## Installation
 This code requires an [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) environment with a recent Python version.
