@@ -5,7 +5,9 @@
 
 
 
-
+<p align="center">
+<img align="middle" src="mDataDriven/Images/StressStrain.pdf" alt="mDEM scheme" width="600" height="200" />
+</p>
 
 
 ## Installation
@@ -26,8 +28,7 @@ The code can then be run with
 $ python -m mDataDriven
 ```
 
-Outputs will be written to mixedDEM/outputs/vtk_files/ and can be opened with paraview.
-
+Outputs will be written to mDataDriven/Images/.
 
 
 ## Dependencies
