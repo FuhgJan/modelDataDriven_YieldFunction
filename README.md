@@ -5,13 +5,9 @@
 
 
 
-<p align="center">
-<img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </p>
-<img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" /> 
-<img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" />
-</p> 
 
-<table>
+
+<table align="center">
   <tr>
     <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
     <td><img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" /> </td>
