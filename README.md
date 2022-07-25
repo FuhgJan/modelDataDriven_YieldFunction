@@ -13,14 +13,14 @@
 
 <table>
   <tr>
-    <td>Stress-strain curve</td>
-     <td>Uniaxial loading comparison</td>
-     <td>Yield surfaces in 3D space</td>
-  </tr>
-  <tr>
     <td><img align="middle" src="mDataDriven/Images/StressStrain.png" alt="Stress-strain curve" width="300" height="225" /> </td>
     <td><img align="middle" src="mDataDriven/Images/uni_GP_corrected.png" alt="Yield surfaces in 3D space" width="225" height="225" /> </td>
     <td><img align="middle" src="mDataDriven/Images/FullStressGP.png" alt="Yield surfaces in 3D space" width="225" height="225" /> </td>
+  </tr>
+    <tr>
+    <td>Stress-strain curve</td>
+     <td>Uniaxial loading comparison</td>
+     <td>Yield surfaces in 3D space</td>
   </tr>
  </table>
 
