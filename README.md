@@ -54,7 +54,7 @@ The code requires the following packages as imports:
  - [MatPlotLib](https://matplotlib.org/) for graphical output
  - [sympy](https://www.sympy.org/en/index.html) for some symbolic algorithms
  - [scikit-image](https://scikit-image.org/) for marching cubes algorithm
- - [https://scikit-learn.org/stable/](https://scikit-learn.org/stable/) for predefined scaler classes
+ - [sklearn](https://scikit-learn.org/stable/) for predefined scaler classes
 
 
 ## References
