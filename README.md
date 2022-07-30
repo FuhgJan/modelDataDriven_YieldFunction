@@ -25,7 +25,7 @@
 
 ## Installation
 This code requires an [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) environment with a recent Python version.
-The complete repository can be cloned and installed locally. It is recommended to create a conda environment before installation. This can be done by the following the command line instructions
+The complete repository can be cloned and installed locally. It is recommended to create a conda environment before installation. This can be done by following these command line instructions:
 
 ```
 $ git clone https://github.com/FuhgJan/modelDataDriven_YieldFunction.git ./modelDataDriven_YieldFunction
