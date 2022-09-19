@@ -4,14 +4,16 @@
 Selected codes for model-data-driven yield functions, including plots for uniaxial, biaxial and 3D yield surface shapes
 as well as material response of models with return-mapping algorithm
 """
-
-
+#import numpy as np
+#bidata = np.load('/home/jf/Desktop/codes/model_data_driven/git_try/mDataDriven/Data/bi_data_6.npz', allow_pickle=True)
+#print(bidata.files)
+#print(bidata.f.bi_data_in)
 import scipy.io as sio
 import numpy as np
 import sympy as sym
 import matplotlib.pyplot as plt
 import mDataDriven.ICNN as icnn
-import mDataDriven.normalNN as Nnn
+
 import torch
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 from scipy import spatial
@@ -29,6 +31,9 @@ from mpl_toolkits.mplot3d import axes3d, art3d
 from torch.autograd.functional import jacobian
 import warnings
 warnings.filterwarnings("ignore")
+
+
+
 # ----------------------------------------------------------------------------------
 ## Establish global variables
 # ----------------------------------------------------------------------------------
@@ -277,16 +282,6 @@ def net_fun_NN(x):
 
     return fVM_corrected
 
-def net_fun(x):
-
-
-    inp_Test_norm = torch.as_tensor(x_scaler.transform(x)).float()
-
-    pred_norm = net_pure(inp_Test_norm).detach().cpu().numpy()
-
-    fVM_corrected =  pred_norm[:,0]
-
-    return fVM_corrected
 
 def fVMCorrected_SVRfun(x):
 
@@ -552,7 +547,7 @@ def run_biaxial():
     sig_vec_fVM_corrected_neti = []
     sig_vec_fVM_corrected_GP = []
     sig_vec_fVM_corrected_SVR = []
-    sig_vec_fVM_model = []
+
     sig_vec_fCB = []
 
     for i in range(betavec0_true.shape[0]):
@@ -566,10 +561,6 @@ def run_biaxial():
         if r > 0.5:
             x0 = x02
 
-        root = optimize.newton(netModel, x0, args=[beta, net_pure], disp=False)
-        sigx = root
-        sigy = root * (np.tan(beta * np.pi / 180))
-        sig_vec_fVM_model.append([sigx, sigy])
 
         root = optimize.newton(correctedModelSVR, x0, args=[beta], disp=False)
         sigx = root
@@ -597,7 +588,7 @@ def run_biaxial():
         sig_vec_fCB.append([sigx, sigy])
 
     sig_vec_fVM_corrected_np_neti = np.asarray(sig_vec_fVM_corrected_neti)
-    sig_vec_fVM_model_np = np.asarray(sig_vec_fVM_model)
+
     sig_vec_fVM_corrected_GP_np = np.asarray(sig_vec_fVM_corrected_GP)
     sig_vec_fVM_corrected_SVR_np = np.asarray(sig_vec_fVM_corrected_SVR)
     sig_vec_fVM_np = np.asarray(sig_vec_fVM)
@@ -621,11 +612,6 @@ def run_biaxial():
 
     sig_vec_fVM_corrected_np_neti = np.vstack((sig_vec_fVM_corrected_np_neti, sig_vec_fVM_corrected_np_neti[0, :]))
 
-    pts = sig_vec_fVM_model_np.tolist()
-    s = sorted(pts, key=clockwiseangle_and_distance)
-    sig_vec_fVM_model_np = np.asarray(s)
-
-    sig_vec_fVM_model_np = np.vstack((sig_vec_fVM_model_np, sig_vec_fVM_model_np[0, :]))
 
     pts = sig_vec_fVM_np.tolist()
     s = sorted(pts, key=clockwiseangle_and_distance)
@@ -638,6 +624,8 @@ def run_biaxial():
     sig_vec_fCB_np = np.asarray(s)
 
     sig_vec_fCB_np = np.vstack((sig_vec_fCB_np, sig_vec_fCB_np[0, :]))
+
+
 
     plt.close()
     fig = plt.figure(figsize=(7, 7))
@@ -719,27 +707,6 @@ def run_biaxial():
     ST = 'mDataDriven/Images/biaxialData_ICNNCorrected_' + str(number) + '.pdf'
     plt.savefig(ST)
 
-    plt.close()
-    fig = plt.figure(figsize=(7, 7))
-    plt.gca().set_aspect('equal')
-    ax = fig.add_subplot(1, 1, 1)
-    plt.plot(sig_vec_fVM_np[:, 0], sig_vec_fVM_np[:, 1], linestyle='-', color='k', label=r'model $f_{mod}$')
-    plt.plot(sig_vec_fCB_np[:, 0], sig_vec_fCB_np[:, 1], linestyle='--', color='g', label=r'true f', lw=2.0)
-    plt.plot(sig_vec_fVM_model_np[:, 0], sig_vec_fVM_model_np[:, 1], linestyle='-', color='b', label=r'fitted $f$',
-             lw=2.0, alpha=0.5)
-    ax.scatter(bidata_in[:, 0], bidata_in[:, 1], s=20, c='k')
-    ax.axhline(color='k', lw=1.2, ls='-')
-    ax.axvline(color='k', lw=1.2, ls='-')
-    ax.tick_params(axis='x', labelsize=11)
-    ax.tick_params(axis='y', labelsize=11)
-    ax.set_xlabel(r'$\sigma_{x}$', fontsize=18)
-    ax.set_ylabel(r'$\sigma_{y}$', fontsize=18)
-    plt.grid(color='0.95', linewidth=1.5)
-    plt.legend(fontsize=13, loc='upper left')
-    ST = 'mDataDriven/Images/biaxialData_PureICNN_' + str(number) + '.pdf'
-    plt.savefig(ST)
-    plt.close()
-    # plt.show()
 
 
 
@@ -761,10 +728,6 @@ def run_3d():
     ff_VMCorrected = fVMCorrected_fun(P).reshape(n, n, n)
     ff_VMCorrectedGP = fVMCorrected_GPfun(P).reshape(n, n, n)
     ff_VMCorrectedSVR = fVMCorrected_SVRfun(P).reshape(n, n, n)
-    ff_pureNet = net_fun(P).reshape(n, n, n)
-    ff_pureNetNN = net_fun_NN(P).reshape(n, n, n)
-
-
 
 
     iso_val = 0.0
@@ -776,94 +739,17 @@ def run_3d():
                                                   spacing=(4 * sigv / n, 4 * sigv / n, 4 * sigv / n))
     verts_cNN, faces_cNN, _, _ = marching_cubes(ff_VMCorrected, iso_val,
                                                 spacing=(4 * sigv / n, 4 * sigv / n, 4 * sigv / n))
-    verts_pureNet, faces_pureNet, _, _ = marching_cubes(ff_pureNet, iso_val,
-                                                        spacing=(4 * sigv / n, 4 * sigv / n, 4 * sigv / n))
-    verts_pureNetNN, faces_pureNetNN, _, _ = marching_cubes(ff_pureNetNN, iso_val,
-                                                            spacing=(4 * sigv / n, 4 * sigv / n, 4 * sigv / n))
+
 
 
     verts_VM = verts_VM - 2 * sigv
     verts_fCB = verts_fCB - 2 * sigv
     verts_cGP = verts_cGP - 2 * sigv
     verts_cSVR = verts_cSVR - 2 * sigv
-    verts_pureNet = verts_pureNet - 2 * sigv
+
     verts_cNN = verts_cNN - 2 * sigv
-    verts_pureNetNN = verts_pureNetNN - 2 * sigv
 
 
-    plt.close()
-    fig = plt.figure(figsize=(7, 7), frameon=True)
-    plt.gca().set_aspect('equal')
-    ax = fig.add_subplot(111, projection='3d')
-    tris = ax.plot_trisurf(verts_VM[:, 1], verts_VM[:, 0], faces_VM, verts_VM[:, 2], color='k',
-                           lw=1, alpha=0.007, label=r'model  $f_{mod}$', edgecolor=(0.0, 0.0, 0.0, 0.0005))
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-    tris = ax.plot_trisurf(verts_fCB[:, 1], verts_fCB[:, 0], faces_fCB, verts_fCB[:, 2], color=(0.0, 0.9, 0.3),
-                           lw=1, alpha=0.02, label=r'true $f$', edgecolor=(0.0, 0.9, 0.3, 0.001))
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-
-    for i in np.arange(verts_pureNetNN.shape[0]):
-        if verts_pureNetNN[i, 0] > 600.:
-            verts_pureNetNN[i, 0] = np.nan
-        if verts_pureNetNN[i, 0] < -600.:
-            verts_pureNetNN[i, 0] = np.nan
-        if verts_pureNetNN[i, 1] > 600.:
-            verts_pureNetNN[i, 1] = np.nan
-        if verts_pureNetNN[i, 1] < -600.:
-            verts_pureNetNN[i, 1] = np.nan
-        if verts_pureNetNN[i, 2] > 600.:
-            verts_pureNetNN[i, 2] = np.nan
-        if verts_pureNetNN[i, 2] < -600.:
-            verts_pureNetNN[i, 2] = np.nan
-        else:
-            pass
-
-    tris = ax.plot_trisurf(verts_pureNetNN[:, 1], verts_pureNetNN[:, 0], faces_pureNetNN, verts_pureNetNN[:, 2],
-                           color='b', linewidth=1.0, alpha=0.03, edgecolor=(0.1, 0.2, 0.5, 0.001), label=r'fitted $f$')
-    # Create a Rectangle patch
-    # ax.plot([-1110,-10000], [-1110,-10001],color='b',label=r'corrected $f$')
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-    ax.scatter(inp_data[:, 0], inp_data[:, 1], inp_data[:, 2], c='k', s=10)
-    plt.xlim([-600, 600])
-    plt.ylim([-600, 600])
-    ax.set_zlim(-600, 600)
-    ax.set_xlabel(r'$\sigma_{xx}$', fontsize=18)
-    ax.set_ylabel(r'$\sigma_{yy}$', fontsize=18)
-    ax.set_zlabel(r'$\sigma_{xy}$', fontsize=18)
-    leg = plt.legend(fontsize=14, loc='upper left', ncol=3)
-    for lh in leg.legendHandles:
-        lh.set_alpha(0.5)
-    ax.view_init(elev=20., azim=-40)
-    ax.tick_params(axis='x', labelsize=11)
-    ax.tick_params(axis='y', labelsize=11)
-    ax.tick_params(axis='z', labelsize=11)
-    ax.grid(False)
-
-
-    xlims, ylims, zlims = lims(ax.get_xlim()), lims(ax.get_ylim()), lims(ax.get_zlim())
-    i = pylab.array([xlims[0], ylims[0], zlims[0]])
-    f = pylab.array([xlims[0], ylims[0], zlims[1]])
-    p = art3d.Poly3DCollection(pylab.array([[i, f]]))
-    p.set_color((0, 0, 0, 0.1))
-    # p.set_alpha(0.2)
-    ax.add_collection3d(p)
-    ax.xaxis.pane.set_edgecolor('#000000')
-    ax.yaxis.pane.set_edgecolor('#000000')
-    ax.zaxis.pane.set_edgecolor('#000000')
-    ax.xaxis.pane.set_alpha(0.1)
-    ax.yaxis.pane.set_alpha(0.1)
-    ax.zaxis.pane.set_alpha(0.1)
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-    # fig.tight_layout()
-    # ax.spines[item].set_linewidth( 1 )
-    ST = 'mDataDriven/Images/FullStressPureNN_NNNew_' + str(number) + '.pdf'
-    plt.savefig(ST)
-    # plt.show()
 
     plt.close()
     fig = plt.figure(figsize=(7, 7), frameon=True)
@@ -927,65 +813,6 @@ def run_3d():
     plt.savefig(ST)
     # plt.show()
 
-    plt.close()
-    fig = plt.figure(figsize=(7, 7), frameon=True)
-    plt.gca().set_aspect('equal')
-    ax = fig.add_subplot(111, projection='3d')
-    tris = ax.plot_trisurf(verts_VM[:, 1], verts_VM[:, 0], faces_VM, verts_VM[:, 2], color='k',
-                           lw=1, alpha=0.007, label=r'model  $f_{mod}$', edgecolor=(0.0, 0.0, 0.0, 0.0005))
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-    tris = ax.plot_trisurf(verts_fCB[:, 1], verts_fCB[:, 0], faces_fCB, verts_fCB[:, 2], color=(0.0, 0.9, 0.3),
-                           lw=1, alpha=0.02, label=r'true $f$', edgecolor=(0.0, 0.9, 0.3, 0.001))
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-
-    tris = ax.plot_trisurf(verts_pureNet[:, 1], verts_pureNet[:, 0], faces_pureNet, verts_pureNet[:, 2], color='b',
-                           linewidth=1.0, alpha=0.03, edgecolor=(0.1, 0.2, 0.5, 0.001), label=r'fitted $f$')
-    tris._facecolors2d = tris._facecolors3d
-    tris._edgecolors2d = tris._edgecolors3d
-
-    ax.scatter(inp_data[:, 0], inp_data[:, 1], inp_data[:, 2], c='k', s=10)
-
-    plt.xlim([-600, 600])
-    plt.ylim([-600, 600])
-    ax.set_zlim(-600, 600)
-    ax.set_xlabel(r'$\sigma_{xx}$', fontsize=18)
-    ax.set_ylabel(r'$\sigma_{yy}$', fontsize=18)
-    ax.set_zlabel(r'$\sigma_{xy}$', fontsize=18)
-
-    leg = plt.legend(fontsize=14, loc='upper left', ncol=3)
-    for lh in leg.legendHandles:
-        lh.set_alpha(0.5)
-    ax.view_init(elev=20., azim=-40)
-    ax.tick_params(axis='x', labelsize=11)
-    ax.tick_params(axis='y', labelsize=11)
-    ax.tick_params(axis='z', labelsize=11)
-    ax.grid(False)
-
-
-
-    xlims, ylims, zlims = lims(ax.get_xlim()), lims(ax.get_ylim()), lims(ax.get_zlim())
-    i = pylab.array([xlims[0], ylims[0], zlims[0]])
-    f = pylab.array([xlims[0], ylims[0], zlims[1]])
-    p = art3d.Poly3DCollection(pylab.array([[i, f]]))
-    p.set_color((0, 0, 0, 0.1))
-    # p.set_alpha(0.2)
-    ax.add_collection3d(p)
-    ax.xaxis.pane.set_edgecolor('#000000')
-    ax.yaxis.pane.set_edgecolor('#000000')
-    ax.zaxis.pane.set_edgecolor('#000000')
-    ax.xaxis.pane.set_alpha(0.1)
-    ax.yaxis.pane.set_alpha(0.1)
-    ax.zaxis.pane.set_alpha(0.1)
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-    # fig.tight_layout()
-    # ax.spines[item].set_linewidth( 1 )
-    ST = 'mDataDriven/Images/FullStressPureNNNew_' + str(number) + '.pdf'
-    plt.savefig(ST)
-    # plt.show()
 
     plt.close()
     fig = plt.figure(figsize=(7, 7), frameon=True)
@@ -1380,185 +1207,207 @@ def run(ex_end,ey_end,exy_end):
 
 if __name__ == '__main__':
 
-    # ----------------------------------------------------------------------------------
-    ## Load 28 training data points obtained from uniaxial and biaxial tests
-    # ----------------------------------------------------------------------------------
-    unidata = np.load('mDataDriven/Data/uni_data.npz',allow_pickle=True)
-    unidata_in = unidata['uni_data_in'].astype(float)
-    unidata_out = unidata['uni_data_out'].astype(float)
-
-    bidata = np.load('mDataDriven/Data/bi_data.npz',allow_pickle=True)
-    bidata_in = bidata['bi_data_in'].astype(float)
-    bidata_out = bidata['bi_data_out'].astype(float)
-
-    distance, index = spatial.KDTree(bidata_in).query(unidata_in)
-    idx = np.where(distance>1e-2)[0]
-    unidata_in=unidata_in[idx,:]
-    unidata_out = unidata_out[idx,:]
 
 
-    inp_data = np.vstack((bidata_in,unidata_in))
-    out_data = np.vstack((bidata_out,unidata_out))
-    out_data_zeros = np.zeros_like(out_data)
+    for i in range(3):
+        # ----------------------------------------------------------------------------------
+        ## Load different number of training data points obtained from uniaxial and biaxial tests
+        # ----------------------------------------------------------------------------------
+        if i==0:
+            # 28 points
+            print('...28 data points')
+            unidata = np.load('mDataDriven/Data/uni_data.npz',allow_pickle=True)
+            unidata_in = unidata['uni_data_in'].astype(float)
+            unidata_out = unidata['uni_data_out'].astype(float)
 
-    number = inp_data.shape[0]
+            bidata = np.load('mDataDriven/Data/bi_data.npz',allow_pickle=True)
+            bidata_in = bidata['bi_data_in'].astype(float)
+            bidata_out = bidata['bi_data_out'].astype(float)
 
-    # ----------------------------------------------------------------------------------
-    ## Data preprocessing
-    # ----------------------------------------------------------------------------------
-    addPoints = []
-    mm =0
-    for i in range(mm):
-        x0 = np.random.uniform(-2*sigv, 2*sigv,3)
-        distance, index = spatial.KDTree(inp_data).query(x0)
-        if distance>200:
-            addPoints.append(x0)
+            betavec0_plot = np.array((0., 30., 45, 60., 90., 120., 135., 150.))
+        if i==1:
+            # 16 points
+            print('...16 data points')
+            unidata = np.load('mDataDriven/Data/uni_data_10.npz', allow_pickle=True)
+            unidata_in = unidata['uni_data_in'].astype(float)
+            unidata_out = unidata['uni_data_out'].astype(float)
 
-    addPoints = np.asarray(addPoints)
-    if mm==0:
-        inp_data_added = inp_data
-        out_data_added = out_data
-    else:
-        inp_data_added = np.vstack((inp_data,addPoints))
-        out_data_added = np.vstack((out_data,np.zeros((addPoints.shape[0],1))))
+            bidata = np.load('mDataDriven/Data/bi_data_10.npz', allow_pickle=True)
+            bidata_in = bidata['bi_data_in'].astype(float)
+            bidata_out = bidata['bi_data_out'].astype(float)
 
+            betavec0_plot = np.array((0., 45, 90., 120., 150.))
+        if i==2:
+            # 8 points
+            print('...8 data points')
+            unidata = np.load('mDataDriven/Data/uni_data_6.npz', allow_pickle=True)
+            unidata_in = unidata['uni_data_in'].astype(float)
+            unidata_out = unidata['uni_data_out'].astype(float)
 
+            bidata = np.load('mDataDriven/Data/bi_data_6.npz', allow_pickle=True)
+            bidata_in = bidata['bi_data_in'].astype(float)
+            bidata_out = bidata['bi_data_out'].astype(float)
 
-    # ----------------------------------------------------------------------------------
-    ## Establish GP correction model
-    # ----------------------------------------------------------------------------------
-    file_GP_model_Corr = 'mDataDriven/Models/GP_model_corr_'+str(number)+'Points.pkl'
-    with open(file_GP_model_Corr, 'rb') as inp:
-        gp_corrected = pickle.load(inp)
+            betavec0_plot = np.array((0., 45., 90.))
 
-
-    # ----------------------------------------------------------------------------------
-    ## Establish ICNN correction model
-    # ----------------------------------------------------------------------------------
-    icnn_corrected = icnn.ICNN_net(inp=3, out=1, activation=torch.nn.ReLU(), num_hidden_units=30, num_layers=3)
-    icnn_corrected.recover_model('mDataDriven/Models/ICNN_model_corr_'+str(number)+'Points.pt')
-
-    # ----------------------------------------------------------------------------------
-    ## Establish ICNN model trained on zeros without correction
-    # ----------------------------------------------------------------------------------
-    net_pure = icnn.ICNN_net(inp=3, out=1, activation=torch.nn.ReLU(), num_hidden_units=30, num_layers=3)
-    net_pure.recover_model('mDataDriven/Models/ICNN_model_'+str(number)+'Points.pt')
-
-    # ----------------------------------------------------------------------------------
-    ## Establish NN model trained on zeros without correction
-    # ----------------------------------------------------------------------------------
-    net_pureNN = Nnn.NN_net(inp=3, out=1, activation=torch.nn.ReLU(), num_hidden_units=30, num_layers=3)
-    net_pureNN.recover_model('mDataDriven/Models/NN_model_'+str(number)+'Points.pt')
-
-    # ----------------------------------------------------------------------------------
-    ## Establish SVR correction model
-    # ----------------------------------------------------------------------------------
-    with open('mDataDriven/Models/SVR_model_corr_'+str(number)+'Points.pkl', 'rb') as inp:
-        svr_corrected = pickle.load(inp)
+        distance, index = spatial.KDTree(bidata_in).query(unidata_in)
+        idx = np.where(distance > 1e-2)[0]
+        unidata_in = unidata_in[idx, :]
+        unidata_out = unidata_out[idx, :]
 
 
-    # ----------------------------------------------------------------------------------
-    ## Get scalers
-    # ----------------------------------------------------------------------------------
-    x_scaler = MinMaxScaler()
-    x_norm = x_scaler.fit_transform(inp_data)
+        inp_data = np.vstack((bidata_in,unidata_in))
+        out_data = np.vstack((bidata_out,unidata_out))
+        out_data_zeros = np.zeros_like(out_data)
 
-    x_scaler_added = MinMaxScaler()
-    x_norm_added = x_scaler_added.fit_transform(inp_data_added)
+        number = inp_data.shape[0]
 
-    y_scaler = MinMaxScaler()
-    y_norm = y_scaler.fit_transform(out_data)
+        # ----------------------------------------------------------------------------------
+        ## Data preprocessing
+        # ----------------------------------------------------------------------------------
+        addPoints = []
+        mm =0
+        for i in range(mm):
+            x0 = np.random.uniform(-2*sigv, 2*sigv,3)
+            distance, index = spatial.KDTree(inp_data).query(x0)
+            if distance>200:
+                addPoints.append(x0)
 
-    y_scaler_added = MinMaxScaler()
-    y_norm_added = y_scaler_added.fit_transform(out_data_added)
-
-    x_min_torch = torch.as_tensor(x_scaler_added.data_min_).float()
-    x_max_torch = torch.as_tensor(x_scaler_added.data_max_).float()
-    y_min_torch = torch.as_tensor(y_scaler_added.data_min_).float()
-    y_max_torch = torch.as_tensor(y_scaler_added.data_max_).float()
-
-
-    inp = inp_data[0,:].reshape(1, 3)
-    inp_scaled = x_scaler.transform(inp)
-    inp_Test_norm = torch.as_tensor(inp_scaled).float()
-
-
-    ## For data point plotting
-    betavec0_true = np.linspace(0.0,180,400)
-    betavec0_plot = np.array((0., 30., 45, 60., 90., 120., 135., 150.))
-    #betavec0_plot = np.array((0., 45, 90., 120., 150.))
-    #betavec0_plot = np.array((0., 45., 90.))
-
-    # ----------------------------------------------------------------------------------
-    ## Obtain uniaxial plots
-    # ----------------------------------------------------------------------------------
-    print('----------------------------------------------------------------------------------')
-    print('Part 1/4:  Obtain uniaxial plots')
-    print('----------------------------------------------------------------------------------')
-    run_uni()
-
-    # ----------------------------------------------------------------------------------
-    ## Obtain biaxial plots
-    # ----------------------------------------------------------------------------------
-    print('----------------------------------------------------------------------------------')
-    print('Part 2/4:  Obtain biaxial plots')
-    print('----------------------------------------------------------------------------------')
-    run_biaxial()
-
-    # ----------------------------------------------------------------------------------
-    ## Obtain 3D plots
-    # ----------------------------------------------------------------------------------
-    print('----------------------------------------------------------------------------------')
-    print('Part 3/4:  Obtain 3D plots')
-    print('----------------------------------------------------------------------------------')
-    run_3d()
-
-    # ----------------------------------------------------------------------------------
-    ## Run loading curves
-    # ----------------------------------------------------------------------------------
-    print('----------------------------------------------------------------------------------')
-    print('Part 4/4:  Run loading curves...')
+        addPoints = np.asarray(addPoints)
+        if mm==0:
+            inp_data_added = inp_data
+            out_data_added = out_data
+        else:
+            inp_data_added = np.vstack((inp_data,addPoints))
+            out_data_added = np.vstack((out_data,np.zeros((addPoints.shape[0],1))))
 
 
-    # Loading with ICNN correction model
-    print('...ICNN')
-    f_fun = fVM_Corrected
-    (ev_np_modelCorrect1, ep_np_modelCorrect1, sigvec_np_modelCorrect1, f_vec_np_modelCorrect1) = run(0.,-0.1,0.)
-    (ev_np_modelCorrect2, ep_np_modelCorrect2, sigvec_np_modelCorrect2, f_vec_np_modelCorrect2) = run(0.0,0.1,0.)
 
-    # Loading true model
-    print('...true model')
-    f_fun = fCB
-    (ev_np_true1, ep_np_true1, sigvec_np_true1, f_vec_np_true1) = run(0., -0.1, 0.)
-    (ev_np_true2, ep_np_true2, sigvec_np_true2, f_vec_np_true2) = run(0., 0.1, 0.)
+        # ----------------------------------------------------------------------------------
+        ## Establish GP correction model
+        # ----------------------------------------------------------------------------------
+        file_GP_model_Corr = 'mDataDriven/Models/GP_model_corr_'+str(number)+'Points.pkl'
+        with open(file_GP_model_Corr, 'rb') as inp:
+            gp_corrected = pickle.load(inp)
 
-    # Loading base model
-    print('...base model')
-    f_fun = fVM
-    (ev_np_model1, ep_np_model1, sigvec_np_model1, f_vec_np_model1) = run(0.0, -0.1, 0.)
-    (ev_np_model2, ep_np_model2, sigvec_np_model2, f_vec_np_model2) = run(0.0, 0.1, 0.)
 
-    print('----------------------------------------------------------------------------------')
+        # ----------------------------------------------------------------------------------
+        ## Establish ICNN correction model
+        # ----------------------------------------------------------------------------------
+        icnn_corrected = icnn.ICNN_net(inp=3, out=1, activation=torch.nn.ReLU(), num_hidden_units=30, num_layers=3)
+        icnn_corrected.recover_model('mDataDriven/Models/ICNN_model_corr_'+str(number)+'Points.pt')
 
-    plt.close()
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(1, 1, 1)
-    plt.plot(ev_np_model1[1, :], sigvec_np_model1[1, :], label=r'model $f_{mod}$', color='k', lw=2)
-    plt.plot(ev_np_model2[1, :], sigvec_np_model2[1, :], color='k', lw=2)
-    plt.plot(ev_np_true1[1, :], sigvec_np_true1[1, :], linestyle='--', label=r'true $f$', color='g', lw=3)
-    plt.plot(ev_np_true2[1, :], sigvec_np_true2[1, :], linestyle='--', color='g', lw=3)
-    plt.plot(ev_np_modelCorrect1[1, :], sigvec_np_modelCorrect1[1, :], label=r'corrected $f$', color='b', lw=3,
-             alpha=0.5)
-    plt.plot(ev_np_modelCorrect2[1, :], sigvec_np_modelCorrect2[1, :], color='b', lw=3, alpha=0.5)
-    ax.tick_params(axis='x', labelsize=11)
-    ax.tick_params(axis='y', labelsize=11)
-    ax.axhline(color='k', lw=1.0, ls='-')
-    ax.axvline(color='k', lw=1.0, ls='-')
-    ax.set_xlabel(r'Total strain $\epsilon_{y}$', fontsize=18)
-    ax.set_ylabel(r'Cauchy stress $\sigma_{yy}$', fontsize=18)
-    plt.grid(color='0.95', linewidth=1.5)
-    plt.legend(fontsize=14, loc='upper left')
-    plt.savefig('mDataDriven/Images/StressStrainEpsY_INET_' + str(number) + '.pdf')
-    plt.close()
-    #plt.show()
+
+        # ----------------------------------------------------------------------------------
+        ## Establish SVR correction model
+        # ----------------------------------------------------------------------------------
+        with open('mDataDriven/Models/SVR_model_corr_'+str(number)+'Points.pkl', 'rb') as inp:
+            svr_corrected = pickle.load(inp)
+
+
+        # ----------------------------------------------------------------------------------
+        ## Get scalers
+        # ----------------------------------------------------------------------------------
+        x_scaler = MinMaxScaler()
+        x_norm = x_scaler.fit_transform(inp_data)
+
+        x_scaler_added = MinMaxScaler()
+        x_norm_added = x_scaler_added.fit_transform(inp_data_added)
+
+        y_scaler = MinMaxScaler()
+        y_norm = y_scaler.fit_transform(out_data)
+
+        y_scaler_added = MinMaxScaler()
+        y_norm_added = y_scaler_added.fit_transform(out_data_added)
+
+        x_min_torch = torch.as_tensor(x_scaler_added.data_min_).float()
+        x_max_torch = torch.as_tensor(x_scaler_added.data_max_).float()
+        y_min_torch = torch.as_tensor(y_scaler_added.data_min_).float()
+        y_max_torch = torch.as_tensor(y_scaler_added.data_max_).float()
+
+
+        inp = inp_data[0,:].reshape(1, 3)
+        inp_scaled = x_scaler.transform(inp)
+        inp_Test_norm = torch.as_tensor(inp_scaled).float()
+
+
+        ## For data point plotting
+        betavec0_true = np.linspace(0.0,180,400)
+
+
+
+        # ----------------------------------------------------------------------------------
+        ## Obtain uniaxial plots
+        # ----------------------------------------------------------------------------------
+        print('----------------------------------------------------------------------------------')
+        print('Part 1/3:  Obtain uniaxial plots')
+        print('----------------------------------------------------------------------------------')
+        run_uni()
+
+        # ----------------------------------------------------------------------------------
+        ## Obtain biaxial plots
+        # ----------------------------------------------------------------------------------
+        print('----------------------------------------------------------------------------------')
+        print('Part 2/3:  Obtain biaxial plots')
+        print('----------------------------------------------------------------------------------')
+        run_biaxial()
+
+        # ----------------------------------------------------------------------------------
+        ## Obtain 3D plots
+        # ----------------------------------------------------------------------------------
+        print('----------------------------------------------------------------------------------')
+        print('Part 3/3:  Obtain 3D plots')
+        print('----------------------------------------------------------------------------------')
+        run_3d()
+
+
+        if number==28:
+            # ----------------------------------------------------------------------------------
+            ## Run loading curves
+            # ----------------------------------------------------------------------------------
+            print('----------------------------------------------------------------------------------')
+            print('Run loading curves...with 28 points')
+
+
+            # Loading with ICNN correction model
+            print('...ICNN')
+            f_fun = fVM_Corrected
+            (ev_np_modelCorrect1, ep_np_modelCorrect1, sigvec_np_modelCorrect1, f_vec_np_modelCorrect1) = run(0.,-0.1,0.)
+            (ev_np_modelCorrect2, ep_np_modelCorrect2, sigvec_np_modelCorrect2, f_vec_np_modelCorrect2) = run(0.0,0.1,0.)
+
+            # Loading true model
+            print('...true model')
+            f_fun = fCB
+            (ev_np_true1, ep_np_true1, sigvec_np_true1, f_vec_np_true1) = run(0., -0.1, 0.)
+            (ev_np_true2, ep_np_true2, sigvec_np_true2, f_vec_np_true2) = run(0., 0.1, 0.)
+
+            # Loading base model
+            print('...base model')
+            f_fun = fVM
+            (ev_np_model1, ep_np_model1, sigvec_np_model1, f_vec_np_model1) = run(0.0, -0.1, 0.)
+            (ev_np_model2, ep_np_model2, sigvec_np_model2, f_vec_np_model2) = run(0.0, 0.1, 0.)
+
+            print('----------------------------------------------------------------------------------')
+
+            plt.close()
+            fig = plt.figure(figsize=(8, 6))
+            ax = fig.add_subplot(1, 1, 1)
+            plt.plot(ev_np_model1[1, :], sigvec_np_model1[1, :], label=r'model $f_{mod}$', color='k', lw=2)
+            plt.plot(ev_np_model2[1, :], sigvec_np_model2[1, :], color='k', lw=2)
+            plt.plot(ev_np_true1[1, :], sigvec_np_true1[1, :], linestyle='--', label=r'true $f$', color='g', lw=3)
+            plt.plot(ev_np_true2[1, :], sigvec_np_true2[1, :], linestyle='--', color='g', lw=3)
+            plt.plot(ev_np_modelCorrect1[1, :], sigvec_np_modelCorrect1[1, :], label=r'corrected $f$', color='b', lw=3,
+                     alpha=0.5)
+            plt.plot(ev_np_modelCorrect2[1, :], sigvec_np_modelCorrect2[1, :], color='b', lw=3, alpha=0.5)
+            ax.tick_params(axis='x', labelsize=11)
+            ax.tick_params(axis='y', labelsize=11)
+            ax.axhline(color='k', lw=1.0, ls='-')
+            ax.axvline(color='k', lw=1.0, ls='-')
+            ax.set_xlabel(r'Total strain $\epsilon_{y}$', fontsize=18)
+            ax.set_ylabel(r'Cauchy stress $\sigma_{yy}$', fontsize=18)
+            plt.grid(color='0.95', linewidth=1.5)
+            plt.legend(fontsize=14, loc='upper left')
+            plt.savefig('mDataDriven/Images/StressStrainEpsY_INET_' + str(number) + '.pdf')
+            plt.close()
+            #plt.show()
 
